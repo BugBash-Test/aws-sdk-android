@@ -242,8 +242,7 @@ class QueueBuffer {
             }
 
             AmazonClientException ce = new AmazonClientException(
-                    "Caught an exception while waiting for request to complete...");
-            ce.initCause(ee);
+                    "Caught an exception while waiting for request to complete...", ee);
             throw ce;
         }
 
