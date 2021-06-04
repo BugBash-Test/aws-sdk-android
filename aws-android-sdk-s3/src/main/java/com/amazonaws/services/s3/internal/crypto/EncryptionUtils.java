@@ -587,7 +587,7 @@ public class EncryptionUtils {
                 return object;
             } catch (IOException e) {
                 throw new AmazonClientException("Error adjusting output to desired byte range: "
-                        + e.getMessage());
+                        + e.getMessage(), e);
             }
         }
     }
