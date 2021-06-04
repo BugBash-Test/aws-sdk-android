@@ -48,13 +48,7 @@ public class IdToken extends UserToken {
      * @return id token expiration claim as {@link java.util.Date} in UTC.
      */
     public Date getExpiration() throws Exception {
-        String claim = JWTParser.getClaim(super.getToken(), "exp");
-        if (claim == null) {
-            return null;
-        }
-        long epocTimeSec = Long.parseLong(claim);
-        long epocTimeMilliSec = epocTimeSec*SEC_IN_MILLSEC;
-        return new Date(epocTimeMilliSec);
+        return getDateFromClaim("exp");
     }
 
     /**
@@ -62,13 +56,7 @@ public class IdToken extends UserToken {
      * @return not before claim as {@link java.util.Date} in UTC.
      */
     public Date getNotBefore() throws Exception {
-        String claim = JWTParser.getClaim(super.getToken(), "nbf");
-        if (claim == null) {
-            return null;
-        }
-        long epocTimeSec = Long.parseLong(claim);
-        long epocTimeMilliSec = epocTimeSec*SEC_IN_MILLSEC;
-        return new Date(epocTimeMilliSec);
+        return getDateFromClaim("nbf");
     }
 
     /**
@@ -76,13 +64,7 @@ public class IdToken extends UserToken {
      * @return issue at claim as {@link java.util.Date} in UTC.
      */
     public Date getIssuedAt() throws Exception {
-        String claim = JWTParser.getClaim(super.getToken(), "iat");
-        if (claim == null) {
-            return null;
-        }
-        long epocTimeSec = Long.parseLong(claim);
-        long epocTimeMilliSec = epocTimeSec*SEC_IN_MILLSEC;
-        return new Date(epocTimeMilliSec);
+        return getDateFromClaim("iat");
     }
 
     /**
@@ -91,5 +73,15 @@ public class IdToken extends UserToken {
      */
     public String getCognitoUsername() throws Exception {
         return JWTParser.getClaim(super.getToken(), "cognito:username");
+    }
+
+    private Date getDateFromClaim(final String fieldName) {
+        String claim = JWTParser.getClaim(super.getToken(), fieldName);
+        if (claim == null) {
+            return null;
+        }
+        long epocTimeSec = Long.parseLong(claim);
+        long epocTimeMilliSec = epocTimeSec*SEC_IN_MILLSEC;
+        return new Date(epocTimeMilliSec);
     }
 }

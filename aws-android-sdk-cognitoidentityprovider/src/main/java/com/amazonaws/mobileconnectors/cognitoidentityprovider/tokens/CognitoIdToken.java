@@ -53,17 +53,7 @@ public class CognitoIdToken extends CognitoUserToken {
      * @return id token expiration claim as {@link java.util.Date} in UTC.
      */
     public Date getExpiration() {
-        try {
-            final String claim = CognitoJWTParser.getClaim(super.getToken(), "exp");
-            if (claim == null) {
-                return null;
-            }
-            final long epocTimeSec = Long.parseLong(claim);
-            final long epocTimeMilliSec = epocTimeSec * SECS;
-            return new Date(epocTimeMilliSec);
-        } catch (final Exception e) {
-            throw new CognitoInternalErrorException(e.getMessage(), e);
-        }
+        return getDateFromClaim("exp");
     }
 
     /**
@@ -72,17 +62,7 @@ public class CognitoIdToken extends CognitoUserToken {
      * @return not before claim as {@link java.util.Date} in UTC.
      */
     public Date getNotBefore() {
-        try {
-            final String claim = CognitoJWTParser.getClaim(super.getToken(), "nbf");
-            if (claim == null) {
-                return null;
-            }
-            final long epocTimeSec = Long.parseLong(claim);
-            final long epocTimeMilliSec = epocTimeSec * SECS;
-            return new Date(epocTimeMilliSec);
-        } catch (final Exception e) {
-            throw new CognitoInternalErrorException(e.getMessage(), e);
-        }
+        return getDateFromClaim("nbf");
     }
 
     /**
@@ -91,13 +71,17 @@ public class CognitoIdToken extends CognitoUserToken {
      * @return issue at claim as {@link java.util.Date} in UTC.
      */
     public Date getIssuedAt() {
+        return getDateFromClaim("iat");
+    }
+
+    private Date getDateFromClaim(final String fieldName) {
         try {
-            final String claim = CognitoJWTParser.getClaim(super.getToken(), "iat");
+            String claim = CognitoJWTParser.getClaim(super.getToken(), fieldName);
             if (claim == null) {
                 return null;
             }
-            final long epocTimeSec = Long.parseLong(claim);
-            final long epocTimeMilliSec = epocTimeSec * SECS;
+            long epocTimeSec = Long.parseLong(claim);
+            long epocTimeMilliSec = epocTimeSec * SECS;
             return new Date(epocTimeMilliSec);
         } catch (final Exception e) {
             throw new CognitoInternalErrorException(e.getMessage(), e);
