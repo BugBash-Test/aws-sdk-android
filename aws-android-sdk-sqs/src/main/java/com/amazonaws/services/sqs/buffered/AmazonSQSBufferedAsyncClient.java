@@ -88,6 +88,11 @@ public class AmazonSQSBufferedAsyncClient implements AmazonSQSAsync {
     public static final String USER_AGENT = AmazonSQSBufferedAsyncClient.class.getSimpleName()
             + "/" + VersionInfoUtils.getVersion();
 
+    /**
+     * Default time for the ReceiveMessageRequest to collect messages.
+     */
+    public static final int DEFAULT_RECEIVE_WAIT_TIME_IN_SECONDS = 10;
+
     private final CachingMap buffers = new CachingMap(16, (float) 0.75, true);
     private final AmazonSQSAsync realSQS;
     private final QueueBufferConfig bufferConfigExemplar;
@@ -231,6 +236,9 @@ public class AmazonSQSBufferedAsyncClient implements AmazonSQSAsync {
             throws AmazonServiceException, AmazonClientException {
         ResultConverter.appendUserAgent(receiveMessageRequest, USER_AGENT);
         QueueBuffer buffer = getQBuffer(receiveMessageRequest.getQueueUrl());
+        if (receiveMessageRequest.getWaitTimeSeconds() == null) {
+            receiveMessageRequest.setWaitTimeSeconds(DEFAULT_RECEIVE_WAIT_TIME_IN_SECONDS);
+        }
         return buffer.receiveMessage(receiveMessageRequest, null);
     }
 
